@@ -95,10 +95,10 @@ function App() {
           <div>
             <Button
               onClick={() => {
-                window.location.href = "https://unisat.io";
+                window.location.href = "https://kasware.xyz";
               }}
             >
-              Install Unisat Wallet
+              Install Kasware Wallet
             </Button>
           </div>
         </header>
@@ -109,7 +109,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <p>Unisat Wallet Demo</p>
+        <p>Kasware Wallet Demo</p>
 
         {connected ? (
           <div
@@ -156,6 +156,7 @@ function App() {
                 >
                   <Radio value={"livenet"}>livenet</Radio>
                   <Radio value={"testnet"}>testnet</Radio>
+                  <Radio value={"devnet"}>devnet</Radio>
                 </Radio.Group>
               </div>
             </Card>
@@ -174,7 +175,7 @@ function App() {
                 handleAccountsChanged(result);
               }}
             >
-              Connect Unisat Wallet
+              Connect Kasware Wallet
             </Button>
           </div>
         )}
@@ -325,7 +326,7 @@ function PushPsbtCard() {
 
 function SendBitcoin() {
   const [toAddress, setToAddress] = useState(
-    "tb1qmfla5j7cpdvmswtruldgvjvk87yrflrfsf6hh0"
+    "kaspadev:qrkvfzdemc23zy3xmklta8654jqcj32wf2pan2m4y8z3ege8kk8ejge4vz9ls"
   );
   const [satoshis, setSatoshis] = useState(1000);
   const [txid, setTxid] = useState("");
