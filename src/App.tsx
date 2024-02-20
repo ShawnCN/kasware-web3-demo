@@ -3,7 +3,7 @@ import "./App.css";
 import { Button, Card, Input, Radio } from "antd";
 
 function App() {
-  const [unisatInstalled, setUnisatInstalled] = useState(false);
+  const [kaswareInstalled, setKaswareInstalled] = useState(false);
   const [connected, setConnected] = useState(false);
   const [accounts, setAccounts] = useState<string[]>([]);
   const [publicKey, setPublicKey] = useState("");
@@ -16,17 +16,17 @@ function App() {
   const [network, setNetwork] = useState("kaspa_mainnet");
 
   const getBasicInfo = async () => {
-    const unisat = (window as any).unisat;
-    const [address] = await unisat.getAccounts();
+    const kasware = (window as any).kasware;
+    const [address] = await kasware.getAccounts();
     setAddress(address);
 
-    const publicKey = await unisat.getPublicKey();
+    const publicKey = await kasware.getPublicKey();
     setPublicKey(publicKey);
 
-    const balance = await unisat.getBalance();
+    const balance = await kasware.getBalance();
     setBalance(balance);
 
-    const network = await unisat.getNetwork();
+    const network = await kasware.getNetwork();
     setNetwork(network);
   };
 
@@ -59,36 +59,36 @@ function App() {
 
   useEffect(() => {
 
-    async function checkUnisat() {
-      let unisat = (window as any).unisat;
+    async function checkKasware() {
+      let kasware = (window as any).kasware;
 
-      for (let i = 1; i < 10 && !unisat; i += 1) {
+      for (let i = 1; i < 10 && !kasware; i += 1) {
           await new Promise((resolve) => setTimeout(resolve, 100*i));
-          unisat = (window as any).unisat;
+          kasware = (window as any).kasware;
       }
 
-      if(unisat){
-          setUnisatInstalled(true);
-      }else if (!unisat)
+      if(kasware){
+          setKaswareInstalled(true);
+      }else if (!kasware)
           return;
 
-      unisat.getAccounts().then((accounts: string[]) => {
+      kasware.getAccounts().then((accounts: string[]) => {
           handleAccountsChanged(accounts);
       });
 
-      unisat.on("accountsChanged", handleAccountsChanged);
-      unisat.on("networkChanged", handleNetworkChanged);
+      kasware.on("accountsChanged", handleAccountsChanged);
+      kasware.on("networkChanged", handleNetworkChanged);
 
       return () => {
-          unisat.removeListener("accountsChanged", handleAccountsChanged);
-          unisat.removeListener("networkChanged", handleNetworkChanged);
+          kasware.removeListener("accountsChanged", handleAccountsChanged);
+          kasware.removeListener("networkChanged", handleNetworkChanged);
       };
     }
 
-    checkUnisat().then();
+    checkKasware().then();
   }, []);
 
-  if (!unisatInstalled) {
+  if (!kaswareInstalled) {
     return (
       <div className="App">
         <header className="App-header">
@@ -105,7 +105,7 @@ function App() {
       </div>
     );
   }
-  const unisat = (window as any).unisat;
+  const kasware = (window as any).kasware;
   return (
     <div className="App">
       <header className="App-header">
@@ -149,7 +149,7 @@ function App() {
                 <div style={{ fontWeight: "bold" }}>Network:</div>
                 <Radio.Group
                   onChange={async (e) => {
-                    const network = await unisat.switchNetwork(e.target.value);
+                    const network = await kasware.switchNetwork(e.target.value);
                     setNetwork(network);
                   }}
                   value={network}
@@ -171,7 +171,7 @@ function App() {
           <div>
             <Button
               onClick={async () => {
-                const result = await unisat.requestAccounts();
+                const result = await kasware.requestAccounts();
                 handleAccountsChanged(result);
               }}
             >
@@ -206,7 +206,7 @@ function SignPsbtCard() {
         style={{ marginTop: 10 }}
         onClick={async () => {
           try {
-            const psbtResult = await (window as any).unisat.signPsbt(psbtHex);
+            const psbtResult = await (window as any).kasware.signPsbt(psbtHex);
             setPsbtResult(psbtResult);
           } catch (e) {
             setPsbtResult((e as any).message);
@@ -240,7 +240,7 @@ function SignMessageCard() {
       <Button
         style={{ marginTop: 10 }}
         onClick={async () => {
-          const signature = await (window as any).unisat.signMessage(message);
+          const signature = await (window as any).kasware.signMessage(message);
           setSignature(signature);
         }}
       >
@@ -276,7 +276,7 @@ function PushTxCard() {
         style={{ marginTop: 10 }}
         onClick={async () => {
           try {
-            const txid = await (window as any).unisat.pushTx(rawtx);
+            const txid = await (window as any).kasware.pushTx(rawtx);
             setTxid(txid);
           } catch (e) {
             setTxid((e as any).message);
@@ -311,7 +311,7 @@ function PushPsbtCard() {
         style={{ marginTop: 10 }}
         onClick={async () => {
           try {
-            const txid = await (window as any).unisat.pushPsbt(psbtHex);
+            const txid = await (window as any).kasware.pushPsbt(psbtHex);
             setTxid(txid);
           } catch (e) {
             setTxid((e as any).message);
@@ -359,7 +359,7 @@ function SendBitcoin() {
         style={{ marginTop: 10 }}
         onClick={async () => {
           try {
-            const txid = await (window as any).unisat.sendBitcoin(
+            const txid = await (window as any).kasware.sendBitcoin(
               toAddress,
               satoshis
             );
