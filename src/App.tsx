@@ -165,7 +165,7 @@ function App() {
             <SignMessageCard />
             <PushTxCard />
             <PushPsbtCard />
-            <SendBitcoin />
+            <SendKaspa />
           </div>
         ) : (
           <div>
@@ -324,7 +324,7 @@ function PushPsbtCard() {
   );
 }
 
-function SendBitcoin() {
+function SendKaspa() {
   const [toAddress, setToAddress] = useState(
     "kaspadev:qrkvfzdemc23zy3xmklta8654jqcj32wf2pan2m4y8z3ege8kk8ejge4vz9ls"
   );
@@ -369,7 +369,7 @@ function SendBitcoin() {
           }
         }}
       >
-        SendBitcoin
+        SendKaspa
       </Button>
     </Card>
   );
