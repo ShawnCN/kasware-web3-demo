@@ -13,7 +13,7 @@ function App() {
     unconfirmed: 0,
     total: 0,
   });
-  const [network, setNetwork] = useState("livenet");
+  const [network, setNetwork] = useState("kaspa_mainnet");
 
   const getBasicInfo = async () => {
     const unisat = (window as any).unisat;
@@ -154,9 +154,9 @@ function App() {
                   }}
                   value={network}
                 >
-                  <Radio value={"livenet"}>livenet</Radio>
-                  <Radio value={"testnet"}>testnet</Radio>
-                  <Radio value={"devnet"}>devnet</Radio>
+                  <Radio value={"kaspa_mainnet"}>livenet</Radio>
+                  <Radio value={"kaspa_testnet"}>testnet</Radio>
+                  <Radio value={"kaspa_devnet"}>devnet</Radio>
                 </Radio.Group>
               </div>
             </Card>
