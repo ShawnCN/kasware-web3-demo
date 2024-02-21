@@ -135,7 +135,7 @@ function App() {
               </div>
 
               <div style={{ textAlign: "left", marginTop: 10 }}>
-                <div style={{ fontWeight: "bold" }}>Balance: (Satoshis)</div>
+                <div style={{ fontWeight: "bold" }}>Balance: (Sompi)</div>
                 <div style={{ wordWrap: "break-word" }}>{balance.total}</div>
               </div>
             </Card>
@@ -160,11 +160,7 @@ function App() {
                 </Radio.Group>
               </div>
             </Card>
-
-            <SignPsbtCard />
             <SignMessageCard />
-            <PushTxCard />
-            <PushPsbtCard />
             <SendKaspa />
           </div>
         ) : (
@@ -184,40 +180,6 @@ function App() {
   );
 }
 
-function SignPsbtCard() {
-  const [psbtHex, setPsbtHex] = useState("");
-  const [psbtResult, setPsbtResult] = useState("");
-  return (
-    <Card size="small" title="Sign Psbt" style={{ width: 300, margin: 10 }}>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>PsbtHex:</div>
-        <Input
-          defaultValue={psbtHex}
-          onChange={(e) => {
-            setPsbtHex(e.target.value);
-          }}
-        ></Input>
-      </div>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>Result:</div>
-        <div style={{ wordWrap: "break-word" }}>{psbtResult}</div>
-      </div>
-      <Button
-        style={{ marginTop: 10 }}
-        onClick={async () => {
-          try {
-            const psbtResult = await (window as any).kasware.signPsbt(psbtHex);
-            setPsbtResult(psbtResult);
-          } catch (e) {
-            setPsbtResult((e as any).message);
-          }
-        }}
-      >
-        Sign Psbt
-      </Button>
-    </Card>
-  );
-}
 
 function SignMessageCard() {
   const [message, setMessage] = useState("hello world~");
@@ -250,85 +212,12 @@ function SignMessageCard() {
   );
 }
 
-function PushTxCard() {
-  const [rawtx, setRawtx] = useState("");
-  const [txid, setTxid] = useState("");
-  return (
-    <Card
-      size="small"
-      title="Push Transaction Hex"
-      style={{ width: 300, margin: 10 }}
-    >
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>rawtx:</div>
-        <Input
-          defaultValue={rawtx}
-          onChange={(e) => {
-            setRawtx(e.target.value);
-          }}
-        ></Input>
-      </div>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>txid:</div>
-        <div style={{ wordWrap: "break-word" }}>{txid}</div>
-      </div>
-      <Button
-        style={{ marginTop: 10 }}
-        onClick={async () => {
-          try {
-            const txid = await (window as any).kasware.pushTx(rawtx);
-            setTxid(txid);
-          } catch (e) {
-            setTxid((e as any).message);
-          }
-        }}
-      >
-        PushTx
-      </Button>
-    </Card>
-  );
-}
-
-function PushPsbtCard() {
-  const [psbtHex, setPsbtHex] = useState("");
-  const [txid, setTxid] = useState("");
-  return (
-    <Card size="small" title="Push Psbt Hex" style={{ width: 300, margin: 10 }}>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>psbt hex:</div>
-        <Input
-          defaultValue={psbtHex}
-          onChange={(e) => {
-            setPsbtHex(e.target.value);
-          }}
-        ></Input>
-      </div>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>txid:</div>
-        <div style={{ wordWrap: "break-word" }}>{txid}</div>
-      </div>
-      <Button
-        style={{ marginTop: 10 }}
-        onClick={async () => {
-          try {
-            const txid = await (window as any).kasware.pushPsbt(psbtHex);
-            setTxid(txid);
-          } catch (e) {
-            setTxid((e as any).message);
-          }
-        }}
-      >
-        pushPsbt
-      </Button>
-    </Card>
-  );
-}
 
 function SendKaspa() {
   const [toAddress, setToAddress] = useState(
     "kaspadev:qrkvfzdemc23zy3xmklta8654jqcj32wf2pan2m4y8z3ege8kk8ejge4vz9ls"
   );
-  const [satoshis, setSatoshis] = useState(1000);
+  const [sompi, setSompi] = useState(1000);
   const [txid, setTxid] = useState("");
   return (
     <Card size="small" title="Send Bitcoin" style={{ width: 300, margin: 10 }}>
@@ -343,11 +232,11 @@ function SendKaspa() {
       </div>
 
       <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>Amount: (satoshis)</div>
+        <div style={{ fontWeight: "bold" }}>Amount: (sompi)</div>
         <Input
-          defaultValue={satoshis}
+          defaultValue={sompi}
           onChange={(e) => {
-            setSatoshis(parseInt(e.target.value));
+            setSompi(parseInt(e.target.value));
           }}
         ></Input>
       </div>
@@ -361,7 +250,7 @@ function SendKaspa() {
           try {
             const txid = await (window as any).kasware.sendBitcoin(
               toAddress,
-              satoshis
+              sompi
             );
             setTxid(txid);
           } catch (e) {
