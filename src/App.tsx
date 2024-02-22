@@ -154,7 +154,7 @@ function App() {
                   }}
                   value={network}
                 >
-                  <Radio value={"kaspa_mainnet"}>livenet</Radio>
+                  <Radio value={"kaspa_mainnet"}>mainnet</Radio>
                   <Radio value={"kaspa_testnet"}>testnet</Radio>
                   <Radio value={"kaspa_devnet"}>devnet</Radio>
                 </Radio.Group>
