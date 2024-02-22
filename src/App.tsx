@@ -220,7 +220,7 @@ function SendKaspa() {
   const [sompi, setSompi] = useState(1000);
   const [txid, setTxid] = useState("");
   return (
-    <Card size="small" title="Send Bitcoin" style={{ width: 300, margin: 10 }}>
+    <Card size="small" title="Send Kaspa" style={{ width: 300, margin: 10 }}>
       <div style={{ textAlign: "left", marginTop: 10 }}>
         <div style={{ fontWeight: "bold" }}>Receiver Address:</div>
         <Input
@@ -248,7 +248,7 @@ function SendKaspa() {
         style={{ marginTop: 10 }}
         onClick={async () => {
           try {
-            const txid = await (window as any).kasware.sendBitcoin(
+            const txid = await (window as any).kasware.sendKaspa(
               toAddress,
               sompi
             );
