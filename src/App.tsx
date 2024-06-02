@@ -269,8 +269,8 @@ function DeployKRC20() {
       p: "KRC-20",
       op: "deploy",
       tick: ticker,
-      max: supply * 100000000,
-      lim: lim * 100000000,
+      max: (supply * 100000000).toString(),
+      lim: (lim * 100000000).toString(),
     };
     const jsonStr = JSON.stringify(deployOjj);
     const txids = await (window as any).kasware.signKRC20Transaction(jsonStr, TxType.SIGN_KRC20_DEPLOY);
