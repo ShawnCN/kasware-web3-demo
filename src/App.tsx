@@ -273,8 +273,8 @@ function DeployKRC20() {
       lim: lim * 100000000,
     };
     const jsonStr = JSON.stringify(deployOjj);
-    const txid = await (window as any).kasware.signKRC20Transaction(jsonStr, TxType.SIGN_KRC20_DEPLOY);
-    setTxid(txid);
+    const txids = await (window as any).kasware.signKRC20Transaction(jsonStr, TxType.SIGN_KRC20_DEPLOY);
+    setTxid(txids);
   };
 
   useEffect(() => {
@@ -321,8 +321,6 @@ function DeployKRC20() {
         onClick={async () => {
           try {
             await handleDeployment();
-            // const txid = await (window as any).kasware.sendKaspa(toAddress, kasAmount * 100000000);
-            setTxid(txid);
           } catch (e) {
             setTxid((e as any).message);
           }
