@@ -1,6 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./App.css";
 import { Button, Card, Input, Radio } from "antd";
+enum TxType {
+  SIGN_TX,
+  SEND_KASPA,
+  SIGN_KRC20_DEPLOY,
+  SIGN_KRC20_MINT,
+  SIGN_KRC20_TRANSFER,
+}
 
 function App() {
   const [kaswareInstalled, setKaswareInstalled] = useState(false);
@@ -58,30 +65,28 @@ function App() {
   };
 
   useEffect(() => {
-
     async function checkKasware() {
       let kasware = (window as any).kasware;
 
       for (let i = 1; i < 10 && !kasware; i += 1) {
-          await new Promise((resolve) => setTimeout(resolve, 100*i));
-          kasware = (window as any).kasware;
+        await new Promise((resolve) => setTimeout(resolve, 100 * i));
+        kasware = (window as any).kasware;
       }
 
-      if(kasware){
-          setKaswareInstalled(true);
-      }else if (!kasware)
-          return;
+      if (kasware) {
+        setKaswareInstalled(true);
+      } else if (!kasware) return;
 
       kasware.getAccounts().then((accounts: string[]) => {
-          handleAccountsChanged(accounts);
+        handleAccountsChanged(accounts);
       });
 
       kasware.on("accountsChanged", handleAccountsChanged);
       kasware.on("networkChanged", handleNetworkChanged);
 
       return () => {
-          kasware.removeListener("accountsChanged", handleAccountsChanged);
-          kasware.removeListener("networkChanged", handleNetworkChanged);
+        kasware.removeListener("accountsChanged", handleAccountsChanged);
+        kasware.removeListener("networkChanged", handleNetworkChanged);
       };
     }
 
@@ -119,11 +124,7 @@ function App() {
               alignItems: "center",
             }}
           >
-            <Card
-              size="small"
-              title="Basic Info"
-              style={{ width: 300, margin: 10 }}
-            >
+            <Card size="small" title="Basic Info" style={{ width: 300, margin: 10 }}>
               <div style={{ textAlign: "left", marginTop: 10 }}>
                 <div style={{ fontWeight: "bold" }}>Address:</div>
                 <div style={{ wordWrap: "break-word" }}>{address}</div>
@@ -135,16 +136,12 @@ function App() {
               </div>
 
               <div style={{ textAlign: "left", marginTop: 10 }}>
-                <div style={{ fontWeight: "bold" }}>Balance: (Sompi)</div>
+                <div style={{ fontWeight: "bold" }}>Balance: (kasAmount)</div>
                 <div style={{ wordWrap: "break-word" }}>{balance.total}</div>
               </div>
             </Card>
 
-            <Card
-              size="small"
-              title="Switch Network"
-              style={{ width: 300, margin: 10 }}
-            >
+            <Card size="small" title="Switch Network" style={{ width: 300, margin: 10 }}>
               <div style={{ textAlign: "left", marginTop: 10 }}>
                 <div style={{ fontWeight: "bold" }}>Network:</div>
                 <Radio.Group
@@ -162,6 +159,9 @@ function App() {
             </Card>
             <SignMessageCard />
             <SendKaspa />
+            <DeployKRC20 />
+            <MintKRC20 />
+            <TransferKRC20 />
           </div>
         ) : (
           <div>
@@ -179,7 +179,6 @@ function App() {
     </div>
   );
 }
-
 
 function SignMessageCard() {
   const [message, setMessage] = useState("hello world~");
@@ -212,12 +211,9 @@ function SignMessageCard() {
   );
 }
 
-
 function SendKaspa() {
-  const [toAddress, setToAddress] = useState(
-    "kaspadev:qrkvfzdemc23zy3xmklta8654jqcj32wf2pan2m4y8z3ege8kk8ejge4vz9ls"
-  );
-  const [sompi, setSompi] = useState(1000);
+  const [toAddress, setToAddress] = useState("kaspatest:qz9dvce5d92czd6t6msm5km3p5m9dyxh5av9xkzjl6pz8hhvc4q7wqg8njjyp");
+  const [kasAmount, setKasAmount] = useState(1);
   const [txid, setTxid] = useState("");
   return (
     <Card size="small" title="Send Kaspa" style={{ width: 300, margin: 10 }}>
@@ -232,11 +228,11 @@ function SendKaspa() {
       </div>
 
       <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>Amount: (sompi)</div>
+        <div style={{ fontWeight: "bold" }}>Amount: (KAS)</div>
         <Input
-          defaultValue={sompi}
+          defaultValue={kasAmount}
           onChange={(e) => {
-            setSompi(parseInt(e.target.value));
+            setKasAmount(parseInt(e.target.value));
           }}
         ></Input>
       </div>
@@ -248,10 +244,7 @@ function SendKaspa() {
         style={{ marginTop: 10 }}
         onClick={async () => {
           try {
-            const txid = await (window as any).kasware.sendKaspa(
-              toAddress,
-              sompi
-            );
+            const txid = await (window as any).kasware.sendKaspa(toAddress, kasAmount * 100000000);
             setTxid(txid);
           } catch (e) {
             setTxid((e as any).message);
@@ -262,6 +255,206 @@ function SendKaspa() {
       </Button>
     </Card>
   );
+}
+
+function DeployKRC20() {
+  // let deployJsonString ='{"p":"KRC-20","op":"deploy","tick":"BBBB","max":"21000000000000000000000000000000","lim":"100000000000000000000"}';
+  const [ticker, setTicker] = useState("");
+  const [supply, setSupply] = useState(100000000);
+  const [lim, setLim] = useState(1000);
+
+  const [txid, setTxid] = useState("");
+  const handleDeployment = async () => {
+    const deployOjj = {
+      p: "KRC-20",
+      op: "deploy",
+      tick: ticker,
+      max: supply * 100000000,
+      lim: lim * 100000000,
+    };
+    const jsonStr = JSON.stringify(deployOjj);
+    const txid = await (window as any).kasware.signKRC20Transaction(jsonStr, TxType.SIGN_KRC20_DEPLOY);
+    setTxid(txid);
+  };
+
+  useEffect(() => {
+    const tempTick = randomString();
+    console.log("temptick", tempTick);
+    setTicker(tempTick);
+  }, []);
+  return (
+    <Card size="small" title="Deploy KRC20" style={{ width: 300, margin: 10 }}>
+      <div style={{ textAlign: "left", marginTop: 10 }}>
+        <div style={{ fontWeight: "bold" }}>Ticker:</div>
+        <Input
+          defaultValue={ticker}
+          onChange={(e) => {
+            setTicker(e.target.value);
+          }}
+        ></Input>
+      </div>
+
+      <div style={{ textAlign: "left", marginTop: 10 }}>
+        <div style={{ fontWeight: "bold" }}>Max Supply: </div>
+        <Input
+          defaultValue={supply}
+          onChange={(e) => {
+            setSupply(parseInt(e.target.value));
+          }}
+        ></Input>
+      </div>
+      <div style={{ textAlign: "left", marginTop: 10 }}>
+        <div style={{ fontWeight: "bold" }}>Amount per mint: </div>
+        <Input
+          defaultValue={lim}
+          onChange={(e) => {
+            setLim(parseInt(e.target.value));
+          }}
+        ></Input>
+      </div>
+      <div style={{ textAlign: "left", marginTop: 10 }}>
+        <div style={{ fontWeight: "bold" }}>txid:</div>
+        <div style={{ wordWrap: "break-word" }}>{txid}</div>
+      </div>
+      <Button
+        style={{ marginTop: 10 }}
+        onClick={async () => {
+          try {
+            await handleDeployment();
+            // const txid = await (window as any).kasware.sendKaspa(toAddress, kasAmount * 100000000);
+            setTxid(txid);
+          } catch (e) {
+            setTxid((e as any).message);
+          }
+        }}
+      >
+        Deploy
+      </Button>
+    </Card>
+  );
+}
+function MintKRC20() {
+  // let mintJsonString = '{\"p\":\"KRC-20\",\"op\":\"mint\",\"tick\":\"RBMV\"}'
+  const [ticker, setTicker] = useState("RBMV");
+
+  const [txid, setTxid] = useState("");
+  const handleMint = async () => {
+    const deployOjj = {
+      p: "KRC-20",
+      op: "mint",
+      tick: ticker,
+    };
+    const jsonStr = JSON.stringify(deployOjj);
+    console.log(jsonStr);
+    const txid = await (window as any).kasware.signKRC20Transaction(jsonStr, TxType.SIGN_KRC20_MINT);
+    setTxid(txid);
+  };
+  return (
+    <Card size="small" title="Mint KRC20" style={{ width: 300, margin: 10 }}>
+      <div style={{ textAlign: "left", marginTop: 10 }}>
+        <div style={{ fontWeight: "bold" }}>Ticker:</div>
+        <Input
+          defaultValue={ticker}
+          onChange={(e) => {
+            setTicker(e.target.value);
+          }}
+        ></Input>
+      </div>
+      <div style={{ textAlign: "left", marginTop: 10 }}>
+        <div style={{ fontWeight: "bold" }}>txid:</div>
+        <div style={{ wordWrap: "break-word" }}>{txid}</div>
+      </div>
+      <Button
+        style={{ marginTop: 10 }}
+        onClick={async () => {
+          try {
+            await handleMint();
+          } catch (e) {
+            setTxid((e as any).message);
+          }
+        }}
+      >
+        Mint
+      </Button>
+    </Card>
+  );
+}
+function TransferKRC20() {
+  // let transferJsonString = '{\"p\":\"KRC-20\",\"op\":\"transfer\",\"tick\":\"RBMV\",\"amt\":\"50000000000\"}'
+  const [ticker, setTicker] = useState("RBMV");
+  const [amount, setAmount] = useState(1);
+  const [toAddress, setToAddress] = useState("kaspatest:qz9dvce5d92czd6t6msm5km3p5m9dyxh5av9xkzjl6pz8hhvc4q7wqg8njjyp");
+
+  const [txid, setTxid] = useState("");
+  const handleTransfer = async () => {
+    const deployOjj = {
+      p: "KRC-20",
+      op: "transfer",
+      tick: ticker,
+      amt: (amount * 100000000).toString(),
+    };
+    const jsonStr = JSON.stringify(deployOjj);
+    console.log(jsonStr);
+    const txid = await (window as any).kasware.signKRC20Transaction(jsonStr, TxType.SIGN_KRC20_TRANSFER, toAddress);
+    setTxid(txid);
+  };
+  return (
+    <Card size="small" title="Transfer KRC20" style={{ width: 300, margin: 10 }}>
+      <div style={{ textAlign: "left", marginTop: 10 }}>
+        <div style={{ fontWeight: "bold" }}>Receiver Address:</div>
+        <Input
+          defaultValue={toAddress}
+          onChange={(e) => {
+            setToAddress(e.target.value);
+          }}
+        ></Input>
+      </div>
+      <div style={{ textAlign: "left", marginTop: 10 }}>
+        <div style={{ fontWeight: "bold" }}>Ticker:</div>
+        <Input
+          defaultValue={ticker}
+          onChange={(e) => {
+            setTicker(e.target.value);
+          }}
+        ></Input>
+      </div>
+      <div style={{ textAlign: "left", marginTop: 10 }}>
+        <div style={{ fontWeight: "bold" }}>Amount:</div>
+        <Input
+          defaultValue={amount}
+          onChange={(e) => {
+            setAmount(Number(e.target.value));
+          }}
+        ></Input>
+      </div>
+      <div style={{ textAlign: "left", marginTop: 10 }}>
+        <div style={{ fontWeight: "bold" }}>txid:</div>
+        <div style={{ wordWrap: "break-word" }}>{txid}</div>
+      </div>
+      <Button
+        style={{ marginTop: 10 }}
+        onClick={async () => {
+          try {
+            await handleTransfer();
+          } catch (e) {
+            setTxid((e as any).message);
+          }
+        }}
+      >
+        Send KRC20 Token
+      </Button>
+    </Card>
+  );
+}
+
+function randomString(len = 4) {
+  var $chars = "ABCDEFGHJKMNPQRSTWXYZ"; /****默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1****/
+  var maxPos = $chars.length;
+  var pwd = "";
+  for (let i = 0; i < len; i++) {
+    pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
+  }
+  return pwd;
 }
 
 export default App;
