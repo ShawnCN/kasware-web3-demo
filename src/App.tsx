@@ -162,6 +162,7 @@ function App() {
             <DeployKRC20 />
             <MintKRC20 />
             <TransferKRC20 />
+            <BatchTransferKRC20 />
           </div>
         ) : (
           <div>
@@ -440,6 +441,81 @@ function TransferKRC20() {
         }}
       >
         Send KRC20 Token
+      </Button>
+    </Card>
+  );
+}
+
+function BatchTransferKRC20() {
+  // let transferJsonString = '{\"p\":\"KRC-20\",\"op\":\"transfer\",\"tick\":\"RBMV\",\"amt\":\"50000000000\"}'
+  const [ticker, setTicker] = useState("WARE");
+  const [amount, setAmount] = useState(1.135);
+  // const [toAddress, setToAddress] = useState("kaspatest:qz9dvce5d92czd6t6msm5km3p5m9dyxh5av9xkzjl6pz8hhvc4q7wqg8njjyp");
+  const toAddrs = [
+    'kaspatest:qz5gzxumm4wt6c4c9zt5gqfsh76gg9f0qr7gfztmfx7nwn8xz75360tmxsmy3',
+    'kaspatest:qqlze5349xuftvskcmz2s5ggf2fu97f9ep0u9pmjmsj6zv4c8c9y7p2ypa26s',
+    // "kaspatest:qp2vyqkuanrqn38362wa5ja93e3se4cv3zqa8yhjalrj24n3g2t52kgq32m8c",
+    "kaspatest:qz45kwyswwpsedqqv3lm3hq3de4c5uwp0cwqnwn74medm4uxzmesvksw9fuyx",
+    "kaspatest:qrpygfgeq45h68wz5pk4rtay02w7fwlhax09x4rsqceqq6s3mz6uctlh3a695",
+  ];
+
+  const [txid, setTxid] = useState("");
+  const handleBatchTransfer = async () => {
+    const deployOjj = {
+      p: "KRC-20",
+      op: "transfer",
+      tick: "WARE",
+      amt: (amount * 100000000).toString(),
+    };
+    const jsonStr = JSON.stringify(deployOjj);
+    console.log(jsonStr);
+    const txid = await (window as any).kasware.signKRC20BatchTransferTransaction(jsonStr, TxType.SIGN_KRC20_TRANSFER, toAddrs);
+    setTxid(txid);
+  };
+  return (
+    <Card size="small" title="Batch Transfer KRC20" style={{ width: 300, margin: 10 }}>
+      <div style={{ textAlign: "left", marginTop: 10 }}>
+        <div style={{ fontWeight: "bold" }}>Receiver Address:</div>
+        {/* <Input
+          defaultValue={toAddress}
+          onChange={(e) => {
+            setToAddress(e.target.value);
+          }}
+        ></Input> */}
+      </div>
+      <div style={{ textAlign: "left", marginTop: 10 }}>
+        <div style={{ fontWeight: "bold" }}>Ticker:</div>
+        <Input
+          defaultValue={ticker}
+          onChange={(e) => {
+            setTicker(e.target.value);
+          }}
+        ></Input>
+      </div>
+      <div style={{ textAlign: "left", marginTop: 10 }}>
+        <div style={{ fontWeight: "bold" }}>Amount:</div>
+        <Input
+          defaultValue={amount}
+          onChange={(e) => {
+            setAmount(Number(e.target.value));
+          }}
+        ></Input>
+      </div> 
+      <div style={{ textAlign: "left", marginTop: 10 }}>
+        <div style={{ fontWeight: "bold" }}>txid:</div>
+        <div style={{ wordWrap: "break-word" }}>{txid}</div>
+      </div>
+      <Button
+        style={{ marginTop: 10 }}
+        onClick={async () => {
+          try {
+            await handleBatchTransfer();
+          } catch (e) {
+            setTxid((e as any).message);
+          }
+        }}
+      >
+        Batch Transfer KRC20 Token
       </Button>
     </Card>
   );
