@@ -124,6 +124,15 @@ function App() {
               alignItems: "center",
             }}
           >
+            <Button
+              onClick={async () => {
+                const origin = window.location.origin;
+                await kasware.disconnect(origin);
+                handleAccountsChanged([]);
+              }}
+            >
+              Disconnect Kasware Wallet
+            </Button>
             <Card size="small" title="Basic Info" style={{ width: 300, margin: 10 }}>
               <div style={{ textAlign: "left", marginTop: 10 }}>
                 <div style={{ fontWeight: "bold" }}>Address:</div>
@@ -452,8 +461,8 @@ function BatchTransferKRC20() {
   const [amount, setAmount] = useState(1.135);
   // const [toAddress, setToAddress] = useState("kaspatest:qz9dvce5d92czd6t6msm5km3p5m9dyxh5av9xkzjl6pz8hhvc4q7wqg8njjyp");
   const toAddrs = [
-    'kaspatest:qz5gzxumm4wt6c4c9zt5gqfsh76gg9f0qr7gfztmfx7nwn8xz75360tmxsmy3',
-    'kaspatest:qqlze5349xuftvskcmz2s5ggf2fu97f9ep0u9pmjmsj6zv4c8c9y7p2ypa26s',
+    "kaspatest:qz5gzxumm4wt6c4c9zt5gqfsh76gg9f0qr7gfztmfx7nwn8xz75360tmxsmy3",
+    "kaspatest:qqlze5349xuftvskcmz2s5ggf2fu97f9ep0u9pmjmsj6zv4c8c9y7p2ypa26s",
     // "kaspatest:qp2vyqkuanrqn38362wa5ja93e3se4cv3zqa8yhjalrj24n3g2t52kgq32m8c",
     "kaspatest:qz45kwyswwpsedqqv3lm3hq3de4c5uwp0cwqnwn74medm4uxzmesvksw9fuyx",
     "kaspatest:qrpygfgeq45h68wz5pk4rtay02w7fwlhax09x4rsqceqq6s3mz6uctlh3a695",
@@ -469,7 +478,11 @@ function BatchTransferKRC20() {
     };
     const jsonStr = JSON.stringify(deployOjj);
     console.log(jsonStr);
-    const txid = await (window as any).kasware.signKRC20BatchTransferTransaction(jsonStr, TxType.SIGN_KRC20_TRANSFER, toAddrs);
+    const txid = await (window as any).kasware.signKRC20BatchTransferTransaction(
+      jsonStr,
+      TxType.SIGN_KRC20_TRANSFER,
+      toAddrs
+    );
     setTxid(txid);
   };
   return (
@@ -500,7 +513,7 @@ function BatchTransferKRC20() {
             setAmount(Number(e.target.value));
           }}
         ></Input>
-      </div> 
+      </div>
       <div style={{ textAlign: "left", marginTop: 10 }}>
         <div style={{ fontWeight: "bold" }}>txid:</div>
         <div style={{ wordWrap: "break-word" }}>{txid}</div>
