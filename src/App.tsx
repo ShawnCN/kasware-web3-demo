@@ -161,7 +161,8 @@ function App() {
                   value={network}
                 >
                   <Radio value={"kaspa_mainnet"}>mainnet</Radio>
-                  <Radio value={"kaspa_testnet"}>testnet</Radio>
+                  <Radio value={"kaspa_testnet_11"}>testnet-11</Radio>
+                  <Radio value={"kaspa_testnet_10"}>testnet-10</Radio>
                   <Radio value={"kaspa_devnet"}>devnet</Radio>
                 </Radio.Group>
               </div>
@@ -400,6 +401,7 @@ function TransferKRC20() {
       op: "transfer",
       tick: ticker,
       amt: (amount * 100000000).toString(),
+      to: toAddress,
     };
     const jsonStr = JSON.stringify(deployOjj);
     console.log(jsonStr);
