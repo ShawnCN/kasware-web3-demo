@@ -168,6 +168,7 @@ function App() {
               </div>
             </Card>
             <SignMessageCard />
+            <VerifyMessageCard publicKey={publicKey} />
             <SendKaspa />
             <DeployKRC20 />
             <MintKRC20 />
@@ -217,6 +218,47 @@ function SignMessageCard() {
         }}
       >
         Sign Message
+      </Button>
+    </Card>
+  );
+}
+
+function VerifyMessageCard({ publicKey }: { publicKey: string }) {
+  const [message, setMessage] = useState("hello world~");
+  const [signature, setSignature] = useState("");
+  const [isVerified, setIsVerified] = useState(false);
+  return (
+    <Card size="small" title="Sign Message" style={{ width: 300, margin: 10 }}>
+      <div style={{ textAlign: "left", marginTop: 10 }}>
+        <div style={{ fontWeight: "bold" }}>Message:</div>
+        <Input
+          defaultValue={message}
+          onChange={(e) => {
+            setMessage(e.target.value);
+          }}
+        ></Input>
+      </div>
+      <div style={{ textAlign: "left", marginTop: 10 }}>
+        <div style={{ fontWeight: "bold" }}>Signature:</div>
+        <Input
+          defaultValue={signature}
+          onChange={(e) => {
+            setSignature(e.target.value);
+          }}
+        ></Input>
+      </div>
+      <div style={{ textAlign: "left", marginTop: 10 }}>
+        <div style={{ fontWeight: "bold" }}>is verified?:</div>
+        <div style={{ wordWrap: "break-word" }}>{isVerified ? "true" : "false"}</div>
+      </div>
+      <Button
+        style={{ marginTop: 10 }}
+        onClick={async () => {
+          const isVerified = await (window as any).kasware.verifyMessage(publicKey, message, signature);
+          setIsVerified(isVerified);
+        }}
+      >
+        Verify Message
       </Button>
     </Card>
   );
