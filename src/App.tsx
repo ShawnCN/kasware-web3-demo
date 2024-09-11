@@ -32,6 +32,8 @@ function App() {
 
     const balance = await kasware.getBalance();
     setBalance(balance);
+    const krc20Balances = await kasware.getKRC20Balance();
+    console.log("krc20Balances", krc20Balances);
 
     const network = await kasware.getNetwork();
     setNetwork(network);
@@ -297,7 +299,9 @@ function SendKaspa() {
         style={{ marginTop: 10 }}
         onClick={async () => {
           try {
-            const txid = await (window as any).kasware.sendKaspa(toAddress, kasAmount * 100000000);
+            const txid = await (window as any).kasware.sendKaspa(toAddress, kasAmount * 100000000, {
+              priorityFee: 10000,
+            });
             setTxid(txid);
           } catch (e) {
             setTxid((e as any).message);
