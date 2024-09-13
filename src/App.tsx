@@ -9,6 +9,14 @@ enum TxType {
   SIGN_KRC20_TRANSFER,
 }
 
+interface IKRC20Balance {
+  balance: string;
+  dec: string;
+  locked: string;
+  opScoreMod: string;
+  tick: string;
+}
+
 function App() {
   const [kaswareInstalled, setKaswareInstalled] = useState(false);
   const [connected, setConnected] = useState(false);
@@ -330,7 +338,8 @@ function DeployKRC20() {
       lim: (lim * 100000000).toString(),
     };
     const jsonStr = JSON.stringify(deployOjj);
-    const txids = await (window as any).kasware.signKRC20Transaction(jsonStr, TxType.SIGN_KRC20_DEPLOY);
+    const priorityFee = 0.1
+    const txids = await (window as any).kasware.signKRC20Transaction(jsonStr, TxType.SIGN_KRC20_DEPLOY, priorityFee);
     setTxid(txids);
   };
 
@@ -451,7 +460,8 @@ function TransferKRC20() {
     };
     const jsonStr = JSON.stringify(deployOjj);
     console.log(jsonStr);
-    const txid = await (window as any).kasware.signKRC20Transaction(jsonStr, TxType.SIGN_KRC20_TRANSFER, toAddress);
+    const priorityFee = 0.1
+    const txid = await (window as any).kasware.signKRC20Transaction(jsonStr, TxType.SIGN_KRC20_TRANSFER, toAddress, priorityFee);
     setTxid(txid);
   };
   return (
@@ -521,15 +531,17 @@ function BatchTransferKRC20() {
     const deployOjj = {
       p: "KRC-20",
       op: "transfer",
-      tick: "WARE",
+      tick: ticker.toUpperCase(),
       amt: (amount * 100000000).toString(),
     };
     const jsonStr = JSON.stringify(deployOjj);
     console.log(jsonStr);
+    const priorityFee = 0.1
     const txid = await (window as any).kasware.signKRC20BatchTransferTransaction(
       jsonStr,
       TxType.SIGN_KRC20_TRANSFER,
-      toAddrs
+      toAddrs,
+      priorityFee
     );
     setTxid(txid);
   };
