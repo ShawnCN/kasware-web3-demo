@@ -1,12 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
-import "./App.css";
-import { Button, Card, Input, Radio } from "antd";
+import React, { useEffect, useRef, useState } from 'react';
+import './App.css';
+import { Button, Card, Input, Radio } from 'antd';
 enum TxType {
   SIGN_TX,
   SEND_KASPA,
   SIGN_KRC20_DEPLOY,
   SIGN_KRC20_MINT,
-  SIGN_KRC20_TRANSFER,
+  SIGN_KRC20_TRANSFER
 }
 
 interface IKRC20Balance {
@@ -21,14 +21,14 @@ function App() {
   const [kaswareInstalled, setKaswareInstalled] = useState(false);
   const [connected, setConnected] = useState(false);
   const [accounts, setAccounts] = useState<string[]>([]);
-  const [publicKey, setPublicKey] = useState("");
-  const [address, setAddress] = useState("");
+  const [publicKey, setPublicKey] = useState('');
+  const [address, setAddress] = useState('');
   const [balance, setBalance] = useState({
     confirmed: 0,
     unconfirmed: 0,
-    total: 0,
+    total: 0
   });
-  const [network, setNetwork] = useState("kaspa_mainnet");
+  const [network, setNetwork] = useState('kaspa_mainnet');
 
   const getBasicInfo = async () => {
     const kasware = (window as any).kasware;
@@ -41,14 +41,14 @@ function App() {
     const balance = await kasware.getBalance();
     setBalance(balance);
     const krc20Balances = await kasware.getKRC20Balance();
-    console.log("krc20Balances", krc20Balances);
+    console.log('krc20Balances', krc20Balances);
 
     const network = await kasware.getNetwork();
     setNetwork(network);
   };
 
   const selfRef = useRef<{ accounts: string[] }>({
-    accounts: [],
+    accounts: []
   });
   const self = selfRef.current;
   const handleAccountsChanged = (_accounts: string[]) => {
@@ -91,12 +91,12 @@ function App() {
         handleAccountsChanged(accounts);
       });
 
-      kasware.on("accountsChanged", handleAccountsChanged);
-      kasware.on("networkChanged", handleNetworkChanged);
+      kasware.on('accountsChanged', handleAccountsChanged);
+      kasware.on('networkChanged', handleNetworkChanged);
 
       return () => {
-        kasware.removeListener("accountsChanged", handleAccountsChanged);
-        kasware.removeListener("networkChanged", handleNetworkChanged);
+        kasware.removeListener('accountsChanged', handleAccountsChanged);
+        kasware.removeListener('networkChanged', handleNetworkChanged);
       };
     }
 
@@ -110,9 +110,8 @@ function App() {
           <div>
             <Button
               onClick={() => {
-                window.location.href = "https://kasware.xyz";
-              }}
-            >
+                window.location.href = 'https://kasware.xyz';
+              }}>
               Install Kasware Wallet
             </Button>
           </div>
@@ -129,51 +128,48 @@ function App() {
         {connected ? (
           <div
             style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center'
+            }}>
             <Button
               onClick={async () => {
                 const origin = window.location.origin;
                 await kasware.disconnect(origin);
                 handleAccountsChanged([]);
-              }}
-            >
+              }}>
               Disconnect Kasware Wallet
             </Button>
             <Card size="small" title="Basic Info" style={{ width: 300, margin: 10 }}>
-              <div style={{ textAlign: "left", marginTop: 10 }}>
-                <div style={{ fontWeight: "bold" }}>Address:</div>
-                <div style={{ wordWrap: "break-word" }}>{address}</div>
+              <div style={{ textAlign: 'left', marginTop: 10 }}>
+                <div style={{ fontWeight: 'bold' }}>Address:</div>
+                <div style={{ wordWrap: 'break-word' }}>{address}</div>
               </div>
 
-              <div style={{ textAlign: "left", marginTop: 10 }}>
-                <div style={{ fontWeight: "bold" }}>PublicKey:</div>
-                <div style={{ wordWrap: "break-word" }}>{publicKey}</div>
+              <div style={{ textAlign: 'left', marginTop: 10 }}>
+                <div style={{ fontWeight: 'bold' }}>PublicKey:</div>
+                <div style={{ wordWrap: 'break-word' }}>{publicKey}</div>
               </div>
 
-              <div style={{ textAlign: "left", marginTop: 10 }}>
-                <div style={{ fontWeight: "bold" }}>Balance: (kasAmount)</div>
-                <div style={{ wordWrap: "break-word" }}>{balance.total}</div>
+              <div style={{ textAlign: 'left', marginTop: 10 }}>
+                <div style={{ fontWeight: 'bold' }}>Balance: (kasAmount)</div>
+                <div style={{ wordWrap: 'break-word' }}>{balance.total}</div>
               </div>
             </Card>
 
             <Card size="small" title="Switch Network" style={{ width: 300, margin: 10 }}>
-              <div style={{ textAlign: "left", marginTop: 10 }}>
-                <div style={{ fontWeight: "bold" }}>Network:</div>
+              <div style={{ textAlign: 'left', marginTop: 10 }}>
+                <div style={{ fontWeight: 'bold' }}>Network:</div>
                 <Radio.Group
                   onChange={async (e) => {
                     const network = await kasware.switchNetwork(e.target.value);
                     setNetwork(network);
                   }}
-                  value={network}
-                >
-                  <Radio value={"kaspa_mainnet"}>mainnet</Radio>
-                  <Radio value={"kaspa_testnet_11"}>testnet-11</Radio>
-                  <Radio value={"kaspa_testnet_10"}>testnet-10</Radio>
-                  <Radio value={"kaspa_devnet"}>devnet</Radio>
+                  value={network}>
+                  <Radio value={'kaspa_mainnet'}>mainnet</Radio>
+                  <Radio value={'kaspa_testnet_11'}>testnet-11</Radio>
+                  <Radio value={'kaspa_testnet_10'}>testnet-10</Radio>
+                  <Radio value={'kaspa_devnet'}>devnet</Radio>
                 </Radio.Group>
               </div>
             </Card>
@@ -184,6 +180,7 @@ function App() {
             <MintKRC20 />
             <TransferKRC20 />
             <BatchTransferKRC20 />
+            <BatchTransferKRC20V2 />
           </div>
         ) : (
           <div>
@@ -191,8 +188,7 @@ function App() {
               onClick={async () => {
                 const result = await kasware.requestAccounts();
                 handleAccountsChanged(result);
-              }}
-            >
+              }}>
               Connect Kasware Wallet
             </Button>
           </div>
@@ -203,30 +199,28 @@ function App() {
 }
 
 function SignMessageCard() {
-  const [message, setMessage] = useState("hello world~");
-  const [signature, setSignature] = useState("");
+  const [message, setMessage] = useState('hello world~');
+  const [signature, setSignature] = useState('');
   return (
     <Card size="small" title="Sign Message" style={{ width: 300, margin: 10 }}>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>Message:</div>
+      <div style={{ textAlign: 'left', marginTop: 10 }}>
+        <div style={{ fontWeight: 'bold' }}>Message:</div>
         <Input
           defaultValue={message}
           onChange={(e) => {
             setMessage(e.target.value);
-          }}
-        ></Input>
+          }}></Input>
       </div>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>Signature:</div>
-        <div style={{ wordWrap: "break-word" }}>{signature}</div>
+      <div style={{ textAlign: 'left', marginTop: 10 }}>
+        <div style={{ fontWeight: 'bold' }}>Signature:</div>
+        <div style={{ wordWrap: 'break-word' }}>{signature}</div>
       </div>
       <Button
         style={{ marginTop: 10 }}
         onClick={async () => {
           const signature = await (window as any).kasware.signMessage(message);
           setSignature(signature);
-        }}
-      >
+        }}>
         Sign Message
       </Button>
     </Card>
@@ -234,40 +228,37 @@ function SignMessageCard() {
 }
 
 function VerifyMessageCard({ publicKey }: { publicKey: string }) {
-  const [message, setMessage] = useState("hello world~");
-  const [signature, setSignature] = useState("");
+  const [message, setMessage] = useState('hello world~');
+  const [signature, setSignature] = useState('');
   const [isVerified, setIsVerified] = useState(false);
   return (
     <Card size="small" title="Sign Message" style={{ width: 300, margin: 10 }}>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>Message:</div>
+      <div style={{ textAlign: 'left', marginTop: 10 }}>
+        <div style={{ fontWeight: 'bold' }}>Message:</div>
         <Input
           defaultValue={message}
           onChange={(e) => {
             setMessage(e.target.value);
-          }}
-        ></Input>
+          }}></Input>
       </div>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>Signature:</div>
+      <div style={{ textAlign: 'left', marginTop: 10 }}>
+        <div style={{ fontWeight: 'bold' }}>Signature:</div>
         <Input
           defaultValue={signature}
           onChange={(e) => {
             setSignature(e.target.value);
-          }}
-        ></Input>
+          }}></Input>
       </div>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>is verified?:</div>
-        <div style={{ wordWrap: "break-word" }}>{isVerified ? "true" : "false"}</div>
+      <div style={{ textAlign: 'left', marginTop: 10 }}>
+        <div style={{ fontWeight: 'bold' }}>is verified?:</div>
+        <div style={{ wordWrap: 'break-word' }}>{isVerified ? 'true' : 'false'}</div>
       </div>
       <Button
         style={{ marginTop: 10 }}
         onClick={async () => {
           const isVerified = await (window as any).kasware.verifyMessage(publicKey, message, signature);
           setIsVerified(isVerified);
-        }}
-      >
+        }}>
         Verify Message
       </Button>
     </Card>
@@ -275,47 +266,44 @@ function VerifyMessageCard({ publicKey }: { publicKey: string }) {
 }
 
 function SendKaspa() {
-  const [toAddress, setToAddress] = useState("kaspatest:qz9dvce5d92czd6t6msm5km3p5m9dyxh5av9xkzjl6pz8hhvc4q7wqg8njjyp");
+  const [toAddress, setToAddress] = useState('kaspatest:qz9dvce5d92czd6t6msm5km3p5m9dyxh5av9xkzjl6pz8hhvc4q7wqg8njjyp');
   const [kasAmount, setKasAmount] = useState(1);
-  const [txid, setTxid] = useState("");
+  const [txid, setTxid] = useState('');
   return (
     <Card size="small" title="Send Kaspa" style={{ width: 300, margin: 10 }}>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>Receiver Address:</div>
+      <div style={{ textAlign: 'left', marginTop: 10 }}>
+        <div style={{ fontWeight: 'bold' }}>Receiver Address:</div>
         <Input
           defaultValue={toAddress}
           onChange={(e) => {
             setToAddress(e.target.value);
-          }}
-        ></Input>
+          }}></Input>
       </div>
 
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>Amount: (KAS)</div>
+      <div style={{ textAlign: 'left', marginTop: 10 }}>
+        <div style={{ fontWeight: 'bold' }}>Amount: (KAS)</div>
         <Input
           defaultValue={kasAmount}
           onChange={(e) => {
             setKasAmount(parseInt(e.target.value));
-          }}
-        ></Input>
+          }}></Input>
       </div>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>txid:</div>
-        <div style={{ wordWrap: "break-word" }}>{txid}</div>
+      <div style={{ textAlign: 'left', marginTop: 10 }}>
+        <div style={{ fontWeight: 'bold' }}>txid:</div>
+        <div style={{ wordWrap: 'break-word' }}>{txid}</div>
       </div>
       <Button
         style={{ marginTop: 10 }}
         onClick={async () => {
           try {
             const txid = await (window as any).kasware.sendKaspa(toAddress, kasAmount * 100000000, {
-              priorityFee: 10000,
+              priorityFee: 10000
             });
             setTxid(txid);
           } catch (e) {
             setTxid((e as any).message);
           }
-        }}
-      >
+        }}>
         SendKaspa
       </Button>
     </Card>
@@ -324,23 +312,23 @@ function SendKaspa() {
 
 function DeployKRC20() {
   // let deployJsonString ='{"p":"KRC-20","op":"deploy","tick":"BBBB","max":"21000000000000000000000000000000","lim":"100000000000000000000"}';
-  const [ticker, setTicker] = useState("");
+  const [ticker, setTicker] = useState('');
   const [supply, setSupply] = useState(100000000);
   const [lim, setLim] = useState(1000);
 
-  const [txid, setTxid] = useState("");
+  const [txid, setTxid] = useState('');
   const handleDeployment = async () => {
     const deployOjj = {
-      p: "KRC-20",
-      op: "deploy",
+      p: 'KRC-20',
+      op: 'deploy',
       tick: ticker,
       max: (supply * 100000000).toString(),
-      lim: (lim * 100000000).toString(),
+      lim: (lim * 100000000).toString()
     };
     const jsonStr = JSON.stringify(deployOjj);
     // kas unit
     const priorityFee = 0.1;
-    const destAddr = "";
+    const destAddr = '';
     const txids = await (window as any).kasware.signKRC20Transaction(
       jsonStr,
       TxType.SIGN_KRC20_DEPLOY,
@@ -352,42 +340,39 @@ function DeployKRC20() {
 
   useEffect(() => {
     const tempTick = randomString();
-    console.log("temptick", tempTick);
+    console.log('temptick', tempTick);
     setTicker(tempTick);
   }, []);
   return (
     <Card size="small" title="Deploy KRC20" style={{ width: 300, margin: 10 }}>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>Ticker:</div>
+      <div style={{ textAlign: 'left', marginTop: 10 }}>
+        <div style={{ fontWeight: 'bold' }}>Ticker:</div>
         <Input
           defaultValue={ticker}
           onChange={(e) => {
             setTicker(e.target.value);
-          }}
-        ></Input>
+          }}></Input>
       </div>
 
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>Max Supply: </div>
+      <div style={{ textAlign: 'left', marginTop: 10 }}>
+        <div style={{ fontWeight: 'bold' }}>Max Supply: </div>
         <Input
           defaultValue={supply}
           onChange={(e) => {
             setSupply(parseInt(e.target.value));
-          }}
-        ></Input>
+          }}></Input>
       </div>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>Amount per mint: </div>
+      <div style={{ textAlign: 'left', marginTop: 10 }}>
+        <div style={{ fontWeight: 'bold' }}>Amount per mint: </div>
         <Input
           defaultValue={lim}
           onChange={(e) => {
             setLim(parseInt(e.target.value));
-          }}
-        ></Input>
+          }}></Input>
       </div>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>txid:</div>
-        <div style={{ wordWrap: "break-word" }}>{txid}</div>
+      <div style={{ textAlign: 'left', marginTop: 10 }}>
+        <div style={{ fontWeight: 'bold' }}>txid:</div>
+        <div style={{ wordWrap: 'break-word' }}>{txid}</div>
       </div>
       <Button
         style={{ marginTop: 10 }}
@@ -397,8 +382,7 @@ function DeployKRC20() {
           } catch (e) {
             setTxid((e as any).message);
           }
-        }}
-      >
+        }}>
         Deploy
       </Button>
     </Card>
@@ -406,20 +390,20 @@ function DeployKRC20() {
 }
 function MintKRC20() {
   // let mintJsonString = '{\"p\":\"KRC-20\",\"op\":\"mint\",\"tick\":\"RBMV\"}'
-  const [ticker, setTicker] = useState("RBMV");
+  const [ticker, setTicker] = useState('RBMV');
 
-  const [txid, setTxid] = useState("");
+  const [txid, setTxid] = useState('');
   const handleMint = async () => {
     const deployOjj = {
-      p: "KRC-20",
-      op: "mint",
-      tick: ticker,
+      p: 'KRC-20',
+      op: 'mint',
+      tick: ticker
     };
     const jsonStr = JSON.stringify(deployOjj);
     console.log(jsonStr);
     // kas unit
     const priorityFee = 1.1;
-    const destAddr = "";
+    const destAddr = '';
     const txid = await (window as any).kasware.signKRC20Transaction(
       jsonStr,
       TxType.SIGN_KRC20_MINT,
@@ -430,18 +414,17 @@ function MintKRC20() {
   };
   return (
     <Card size="small" title="Mint KRC20" style={{ width: 300, margin: 10 }}>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>Ticker:</div>
+      <div style={{ textAlign: 'left', marginTop: 10 }}>
+        <div style={{ fontWeight: 'bold' }}>Ticker:</div>
         <Input
           defaultValue={ticker}
           onChange={(e) => {
             setTicker(e.target.value);
-          }}
-        ></Input>
+          }}></Input>
       </div>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>txid:</div>
-        <div style={{ wordWrap: "break-word" }}>{txid}</div>
+      <div style={{ textAlign: 'left', marginTop: 10 }}>
+        <div style={{ fontWeight: 'bold' }}>txid:</div>
+        <div style={{ wordWrap: 'break-word' }}>{txid}</div>
       </div>
       <Button
         style={{ marginTop: 10 }}
@@ -451,8 +434,7 @@ function MintKRC20() {
           } catch (e) {
             setTxid((e as any).message);
           }
-        }}
-      >
+        }}>
         Mint
       </Button>
     </Card>
@@ -460,18 +442,18 @@ function MintKRC20() {
 }
 function TransferKRC20() {
   // let transferJsonString = '{\"p\":\"KRC-20\",\"op\":\"transfer\",\"tick\":\"RBMV\",\"amt\":\"50000000000\"}'
-  const [ticker, setTicker] = useState("RBMV");
+  const [ticker, setTicker] = useState('RBMV');
   const [amount, setAmount] = useState(1);
-  const [toAddress, setToAddress] = useState("kaspatest:qz9dvce5d92czd6t6msm5km3p5m9dyxh5av9xkzjl6pz8hhvc4q7wqg8njjyp");
+  const [toAddress, setToAddress] = useState('kaspatest:qz9dvce5d92czd6t6msm5km3p5m9dyxh5av9xkzjl6pz8hhvc4q7wqg8njjyp');
 
-  const [txid, setTxid] = useState("");
+  const [txid, setTxid] = useState('');
   const handleTransfer = async () => {
     const deployOjj = {
-      p: "KRC-20",
-      op: "transfer",
+      p: 'KRC-20',
+      op: 'transfer',
       tick: ticker,
       amt: (amount * 100000000).toString(),
-      to: toAddress,
+      to: toAddress
     };
     const jsonStr = JSON.stringify(deployOjj);
     console.log(jsonStr);
@@ -487,36 +469,33 @@ function TransferKRC20() {
   };
   return (
     <Card size="small" title="Transfer KRC20" style={{ width: 300, margin: 10 }}>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>Receiver Address:</div>
+      <div style={{ textAlign: 'left', marginTop: 10 }}>
+        <div style={{ fontWeight: 'bold' }}>Receiver Address:</div>
         <Input
           defaultValue={toAddress}
           onChange={(e) => {
             setToAddress(e.target.value);
-          }}
-        ></Input>
+          }}></Input>
       </div>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>Ticker:</div>
+      <div style={{ textAlign: 'left', marginTop: 10 }}>
+        <div style={{ fontWeight: 'bold' }}>Ticker:</div>
         <Input
           defaultValue={ticker}
           onChange={(e) => {
             setTicker(e.target.value);
-          }}
-        ></Input>
+          }}></Input>
       </div>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>Amount:</div>
+      <div style={{ textAlign: 'left', marginTop: 10 }}>
+        <div style={{ fontWeight: 'bold' }}>Amount:</div>
         <Input
           defaultValue={amount}
           onChange={(e) => {
             setAmount(Number(e.target.value));
-          }}
-        ></Input>
+          }}></Input>
       </div>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>txid:</div>
-        <div style={{ wordWrap: "break-word" }}>{txid}</div>
+      <div style={{ textAlign: 'left', marginTop: 10 }}>
+        <div style={{ fontWeight: 'bold' }}>txid:</div>
+        <div style={{ wordWrap: 'break-word' }}>{txid}</div>
       </div>
       <Button
         style={{ marginTop: 10 }}
@@ -526,8 +505,7 @@ function TransferKRC20() {
           } catch (e) {
             setTxid((e as any).message);
           }
-        }}
-      >
+        }}>
         Send KRC20 Token
       </Button>
     </Card>
@@ -536,24 +514,24 @@ function TransferKRC20() {
 
 function BatchTransferKRC20() {
   // let transferJsonString = '{\"p\":\"KRC-20\",\"op\":\"transfer\",\"tick\":\"RBMV\",\"amt\":\"50000000000\"}'
-  const [ticker, setTicker] = useState("WARE");
+  const [ticker, setTicker] = useState('WARE');
   const [amount, setAmount] = useState(1.135);
   // const [toAddress, setToAddress] = useState("kaspatest:qz9dvce5d92czd6t6msm5km3p5m9dyxh5av9xkzjl6pz8hhvc4q7wqg8njjyp");
   const toAddrs = [
-    "kaspatest:qz5gzxumm4wt6c4c9zt5gqfsh76gg9f0qr7gfztmfx7nwn8xz75360tmxsmy3",
-    "kaspatest:qqlze5349xuftvskcmz2s5ggf2fu97f9ep0u9pmjmsj6zv4c8c9y7p2ypa26s",
+    'kaspatest:qz5gzxumm4wt6c4c9zt5gqfsh76gg9f0qr7gfztmfx7nwn8xz75360tmxsmy3',
+    'kaspatest:qqlze5349xuftvskcmz2s5ggf2fu97f9ep0u9pmjmsj6zv4c8c9y7p2ypa26s',
     // "kaspatest:qp2vyqkuanrqn38362wa5ja93e3se4cv3zqa8yhjalrj24n3g2t52kgq32m8c",
-    "kaspatest:qz45kwyswwpsedqqv3lm3hq3de4c5uwp0cwqnwn74medm4uxzmesvksw9fuyx",
-    "kaspatest:qrpygfgeq45h68wz5pk4rtay02w7fwlhax09x4rsqceqq6s3mz6uctlh3a695",
+    'kaspatest:qz45kwyswwpsedqqv3lm3hq3de4c5uwp0cwqnwn74medm4uxzmesvksw9fuyx',
+    'kaspatest:qrpygfgeq45h68wz5pk4rtay02w7fwlhax09x4rsqceqq6s3mz6uctlh3a695'
   ];
 
-  const [txid, setTxid] = useState("");
+  const [txid, setTxid] = useState('');
   const handleBatchTransfer = async () => {
     const deployOjj = {
-      p: "KRC-20",
-      op: "transfer",
+      p: 'KRC-20',
+      op: 'transfer',
       tick: ticker.toUpperCase(),
-      amt: (amount * 100000000).toString(),
+      amt: (amount * 100000000).toString()
     };
     const jsonStr = JSON.stringify(deployOjj);
     console.log(jsonStr);
@@ -569,8 +547,8 @@ function BatchTransferKRC20() {
   };
   return (
     <Card size="small" title="Batch Transfer KRC20" style={{ width: 300, margin: 10 }}>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>Receiver Address:</div>
+      <div style={{ textAlign: 'left', marginTop: 10 }}>
+        <div style={{ fontWeight: 'bold' }}>Receiver Address:</div>
         {/* <Input
           defaultValue={toAddress}
           onChange={(e) => {
@@ -578,27 +556,25 @@ function BatchTransferKRC20() {
           }}
         ></Input> */}
       </div>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>Ticker:</div>
+      <div style={{ textAlign: 'left', marginTop: 10 }}>
+        <div style={{ fontWeight: 'bold' }}>Ticker:</div>
         <Input
           defaultValue={ticker}
           onChange={(e) => {
             setTicker(e.target.value);
-          }}
-        ></Input>
+          }}></Input>
       </div>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>Amount:</div>
+      <div style={{ textAlign: 'left', marginTop: 10 }}>
+        <div style={{ fontWeight: 'bold' }}>Amount:</div>
         <Input
           defaultValue={amount}
           onChange={(e) => {
             setAmount(Number(e.target.value));
-          }}
-        ></Input>
+          }}></Input>
       </div>
-      <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>txid:</div>
-        <div style={{ wordWrap: "break-word" }}>{txid}</div>
+      <div style={{ textAlign: 'left', marginTop: 10 }}>
+        <div style={{ fontWeight: 'bold' }}>txid:</div>
+        <div style={{ wordWrap: 'break-word' }}>{txid}</div>
       </div>
       <Button
         style={{ marginTop: 10 }}
@@ -608,18 +584,59 @@ function BatchTransferKRC20() {
           } catch (e) {
             setTxid((e as any).message);
           }
-        }}
-      >
+        }}>
         Batch Transfer KRC20 Token
+      </Button>
+    </Card>
+  );
+}
+function BatchTransferKRC20V2() {
+  const [txid, setTxid] = useState('');
+
+  const handleBatchTransfer2 = async () => {
+    const list = [
+      {
+        tick: 'TESLA',
+        to: 'kaspatest:qz9dvce5d92czd6t6msm5km3p5m9dyxh5av9xkzjl6pz8hhvc4q7wqg8njjyp',
+        amount: 1.11
+      },
+      {
+        tick: 'TESLA',
+        to: 'kaspatest:qz45kwyswwpsedqqv3lm3hq3de4c5uwp0cwqnwn74medm4uxzmesvksw9fuyx',
+        amount: 2.11
+      }
+    ];
+    // kas unit
+    const priorityFee = 0.1;
+    const txid = await (window as any).kasware.krc20BatchTransferTransaction(list, priorityFee);
+    setTxid(txid);
+  };
+  return (
+    <Card size="small" title="Batch Transfer KRC20" style={{ width: 300, margin: 10 }}>
+      <div style={{ textAlign: 'left', marginTop: 10 }}>
+        <div style={{ fontWeight: 'bold' }}>txid:</div>
+        <div style={{ wordWrap: 'break-word' }}>{txid}</div>
+      </div>
+
+      <Button
+        style={{ marginTop: 10 }}
+        onClick={async () => {
+          try {
+            await handleBatchTransfer2();
+          } catch (e) {
+            setTxid((e as any).message);
+          }
+        }}>
+        Batch Transfer KRC20 Token V2
       </Button>
     </Card>
   );
 }
 
 function randomString(len = 4) {
-  var $chars = "ABCDEFGHJKMNPQRSTWXYZ"; /****默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1****/
+  var $chars = 'ABCDEFGHJKMNPQRSTWXYZ'; /****默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1****/
   var maxPos = $chars.length;
-  var pwd = "";
+  var pwd = '';
   for (let i = 0; i < len; i++) {
     pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
   }
