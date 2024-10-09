@@ -17,6 +17,16 @@ interface IKRC20Balance {
   tick: string;
 }
 
+interface BatchTransferRes {
+  index: number;
+  tick: string;
+  to: string;
+  amount: number;
+  status: 'success' | 'failed';
+  errorMsg: string;
+  txId: { commitId: string; revealId: string } | undefined;
+}
+
 function App() {
   const [kaswareInstalled, setKaswareInstalled] = useState(false);
   const [connected, setConnected] = useState(false);
@@ -70,8 +80,12 @@ function App() {
   };
 
   const handleNetworkChanged = (network: string) => {
+    console.log('network', network);
     setNetwork(network);
     getBasicInfo();
+  };
+  const handleKRC20BatchTransferChangedChanged = (res: BatchTransferRes) => {
+    console.log('res', res.index, res.status, res.txId?.revealId);
   };
 
   useEffect(() => {
@@ -93,10 +107,12 @@ function App() {
 
       kasware.on('accountsChanged', handleAccountsChanged);
       kasware.on('networkChanged', handleNetworkChanged);
+      kasware.on('krc20BatchTransferChanged', handleKRC20BatchTransferChangedChanged);
 
       return () => {
         kasware.removeListener('accountsChanged', handleAccountsChanged);
         kasware.removeListener('networkChanged', handleNetworkChanged);
+        kasware.removeListener('krc20BatchTransferChanged', handleKRC20BatchTransferChangedChanged);
       };
     }
 
