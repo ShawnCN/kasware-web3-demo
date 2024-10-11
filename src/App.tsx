@@ -38,6 +38,8 @@ function App() {
     unconfirmed: 0,
     total: 0
   });
+  const [krc20Balances, setKRC20Balances] = useState<IKRC20Balance[]>([])
+
   const [network, setNetwork] = useState('kaspa_mainnet');
 
   const getBasicInfo = async () => {
@@ -51,6 +53,7 @@ function App() {
     const balance = await kasware.getBalance();
     setBalance(balance);
     const krc20Balances = await kasware.getKRC20Balance();
+    setKRC20Balances(krc20Balances);
     console.log('krc20Balances', krc20Balances);
 
     const network = await kasware.getNetwork();
@@ -170,6 +173,10 @@ function App() {
               <div style={{ textAlign: 'left', marginTop: 10 }}>
                 <div style={{ fontWeight: 'bold' }}>Balance: (kasAmount)</div>
                 <div style={{ wordWrap: 'break-word' }}>{balance.total}</div>
+              </div>
+              <div style={{ textAlign: 'left', marginTop: 10 }}>
+                <div style={{ fontWeight: 'bold' }}>KRC20 Balance: (kasAmount)</div>
+                <div style={{ wordWrap: 'break-word' }}>{JSON.stringify(krc20Balances)}</div>
               </div>
             </Card>
 
@@ -628,7 +635,7 @@ function BatchTransferKRC20V2() {
     setTxid(txid);
   };
   return (
-    <Card size="small" title="Batch Transfer KRC20" style={{ width: 300, margin: 10 }}>
+    <Card size="small" title="Batch Transfer KRC20 V2" style={{ width: 300, margin: 10 }}>
       <div style={{ textAlign: 'left', marginTop: 10 }}>
         <div style={{ fontWeight: 'bold' }}>txid:</div>
         <div style={{ wordWrap: 'break-word' }}>{txid}</div>
